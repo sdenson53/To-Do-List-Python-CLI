@@ -1,6 +1,6 @@
 # To-Do-List-Python-CLI-
-To-Do List CLI App using python
-Yoi should have prettytable installed if you don't have run:
+To-Do List CLI App using python<br>
+You should have prettytable installed if you don't have run:<br>
 pip install prettytable
 your basic commands should be:
 python todoarg.py -o <option>

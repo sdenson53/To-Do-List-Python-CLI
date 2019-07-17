@@ -3,15 +3,17 @@ import argparse
 import datetime
 import os
 from prettytable import from_csv
+import pandas as pd
 
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-o', '--option', metavar='', help='-o <option> write either you want to add or view')
-parser.add_argument('-t', '--task', metavar='', help='-t <task> Enter the task you want to add in the list')
+parser.add_argument('-t', '--task', metavar='', help='-t <task>Enter the task you want to add', default='error')
 parser.add_argument('-s', '--done', metavar='', help='-s Enter the status Complete if it is', default='Incomplete')
 parser.add_argument('-p', '--project', metavar='', help='-d <project> Enter the project name')
 parser.add_argument('-l', '--select', metavar='', help='-l <used to select the task for modification')
-parser.add_argument('-d', '--due', metavar='', help='-d <due date for the task- today/tomorrow', default='tomorrow')
+parser.add_argument('-d', '--due', metavar='', help='-d <due date for the task- '
+                                                    'today/tomorrow/date in format dd/mm/yyyy', default='tomorrow')
 args = parser.parse_args()
 
 
@@ -43,6 +45,10 @@ with open('csv.csv', 'a+', newline='') as myfile:
             t = time.strftime("%d/%m/%Y")
         elif args.due == 'tomorrow':
             time = datetime.date.today() + datetime.timedelta(days=1)
+            t = time.strftime("%d/%m/%Y")
+        else:
+            td = args.due
+            time = datetime.datetime(2019, 7, 1) + datetime.timedelta(days=(int(td)-1))
             t = time.strftime("%d/%m/%Y")
         q = " & ".join(qs)
         writer.writerow({'T.No': x, 'Date': t, 'Task': args.task, 'Project': args.project,
@@ -85,14 +91,12 @@ with open('csv.csv', 'a+', newline='') as myfile:
 
     def sort():
         if args.select == 'due':
-            import pandas as pd
-
             df = pd.read_csv('csv.csv', index_col=False)
             df['Date'] = pd.to_datetime(df['Date']).dt.strftime('%d/%m/%Y')
             df.sort_values('Date', inplace=True)
             df.to_csv('csv.csv', index=False)
             viewlist()
-        elif args.select == 'status0':
+        elif args.select == 'complete':
             with open("csv.csv", 'r+') as f:
                 lines = f.readlines()
                 with open('result.csv', 'w+') as f3:
@@ -110,7 +114,7 @@ with open('csv.csv', 'a+', newline='') as myfile:
                 f3 = open("result.csv")
                 tb = from_csv(f3)
                 print(tb)
-        elif args.select == 'status1':
+        elif args.select == 'incomplete':
             with open("csv.csv", 'r+') as f:
                 lines = f.readlines()
                 with open('result.csv', 'w+') as f3:
@@ -128,8 +132,45 @@ with open('csv.csv', 'a+', newline='') as myfile:
                 f3 = open("result.csv")
                 tb = from_csv(f3)
                 print(tb)
+        elif args.select == 'project':
+            data = pd.read_csv("csv.csv", index_col=False)
+            data.sort_values(["Project"], axis=0, ascending=True, inplace=True)
+            data.to_csv('result.csv', index=False)
+            db = open('result.csv')
+            tb = from_csv(db)
+            print(tb)
+        elif args.select == 'context':
+            data = pd.read_csv("csv.csv", index_col=False)
+            data.sort_values(["Context"], axis=0, ascending=True, inplace=True)
+            data.to_csv('result.csv', index=False)
+            db = open('result.csv')
+            tb = from_csv(db)
+            print(tb)
+        elif args.select == 'overdue':
+            with open("csv.csv", 'r+') as f:
+                lines = f.readlines()
+                with open('result.csv', 'w+') as f3:
+                    writer = csv.DictWriter(f3, fieldnames=fieldnames)
+                    writer.writeheader()
+                    time = datetime.datetime.now()
+                    t = time.strftime("%d/%m/%Y")
+                    for line in lines:
+                        if line.split(',')[1] == t:
+                            f3.write(line)
+                with open('result.csv') as f2, open('demo005.csv', 'w') as f3:
+                    non_blank = (line for line in f2 if line.strip())
+                    f3.writelines(non_blank)
+                with open('demo005.csv') as f2, open('result.csv', 'w') as f3:
+                    non_blank = (line for line in f2 if line.strip())
+                    f3.writelines(non_blank)
+                f3 = open("result.csv")
+                tb = from_csv(f3)
+                print(tb)
+
+
         else:
-            print("INVALID SELECTION")
+            print("PLEASE SPECIFY HOW YOU WANT TO SORT USING A "
+                  "VALID ARGUMENT -l <complete/incomplete/due/project/context>")
 
 
     def delete():
@@ -150,7 +191,10 @@ with open('csv.csv', 'a+', newline='') as myfile:
 
     def main():
         if args.option == 'add':
-            addtask()
+            if args.task == 'error':
+                print('ERROR TASK NOT SPECIFIED')
+            else:
+                addtask()
         elif args.option == 'view':
             viewlist()
         elif args.option == 'modify':

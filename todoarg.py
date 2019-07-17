@@ -13,7 +13,7 @@ parser.add_argument('-s', '--done', metavar='', help='-s Enter the status Comple
 parser.add_argument('-p', '--project', metavar='', help='-d <project> Enter the project name')
 parser.add_argument('-l', '--select', metavar='', help='-l <used to select the task for modification')
 parser.add_argument('-d', '--due', metavar='', help='-d <due date for the task- '
-                                                    'today/tomorrow/date in format dd/mm/yyyy', default='tomorrow')
+                                                    'today/tomorrow/days to complete', default='tomorrow')
 args = parser.parse_args()
 
 
@@ -48,7 +48,7 @@ with open('csv.csv', 'a+', newline='') as myfile:
             t = time.strftime("%d/%m/%Y")
         else:
             td = args.due
-            time = datetime.datetime(2019, 7, 1) + datetime.timedelta(days=(int(td)-1))
+            time = datetime.datetime.now()+ datetime.timedelta(days=(int(td)))
             t = time.strftime("%d/%m/%Y")
         q = " & ".join(qs)
         writer.writerow({'T.No': x, 'Date': t, 'Task': args.task, 'Project': args.project,

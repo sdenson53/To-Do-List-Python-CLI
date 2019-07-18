@@ -48,7 +48,7 @@ with open('csv.csv', 'a+', newline='') as myfile:
             t = time.strftime("%d/%m/%Y")
         else:
             td = args.due
-            time = datetime.datetime.now()+ datetime.timedelta(days=(int(td)))
+            time = datetime.datetime.now() + datetime.timedelta(days=(int(td)))
             t = time.strftime("%d/%m/%Y")
         q = " & ".join(qs)
         writer.writerow({'T.No': x, 'Date': t, 'Task': args.task, 'Project': args.project,
@@ -152,10 +152,8 @@ with open('csv.csv', 'a+', newline='') as myfile:
                 with open('result.csv', 'w+') as f3:
                     writer = csv.DictWriter(f3, fieldnames=fieldnames)
                     writer.writeheader()
-                    time = datetime.datetime.now()
-                    t = time.strftime("%d/%m/%Y")
                     for line in lines:
-                        if line.split(',')[1] == t:
+                        if "Incomplete" in line.split(',')[5]:
                             f3.write(line)
                 with open('result.csv') as f2, open('demo005.csv', 'w') as f3:
                     non_blank = (line for line in f2 if line.strip())
@@ -163,10 +161,25 @@ with open('csv.csv', 'a+', newline='') as myfile:
                 with open('demo005.csv') as f2, open('result.csv', 'w') as f3:
                     non_blank = (line for line in f2 if line.strip())
                     f3.writelines(non_blank)
-                f3 = open("result.csv")
+            with open("result.csv", 'r+') as f:
+                lines = f.readlines()
+                with open('demo005.csv', 'w+') as f3:
+                    writer = csv.DictWriter(f3, fieldnames=fieldnames)
+                    writer.writeheader()
+                    time = datetime.datetime.now()
+                    t = time.strftime("%d/%m/%Y")
+                    for line in lines:
+                        if line.split(',')[1] <= t:
+                            f3.write(line)
+                with open('demo005.csv') as f2, open('result.csv', 'w') as f3:
+                    non_blank = (line for line in f2 if line.strip())
+                    f3.writelines(non_blank)
+                with open('result.csv') as f2, open('demo005.csv', 'w') as f3:
+                    non_blank = (line for line in f2 if line.strip())
+                    f3.writelines(non_blank)
+                f3 = open("demo005.csv")
                 tb = from_csv(f3)
                 print(tb)
-
 
         else:
             print("PLEASE SPECIFY HOW YOU WANT TO SORT USING A "

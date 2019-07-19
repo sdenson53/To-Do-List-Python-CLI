@@ -58,9 +58,9 @@ with open('csv.csv', 'a+', newline='') as myfile:
 
     def viewlist():
         print('-' * 35 + 'TO-DO List' + '-' * 35)
-        file = open("csv.csv")
-        table = from_csv(file)
-        print(table)
+        with open('csv.csv') as file:
+            table = from_csv(file)
+            print(table)
 
 
     def modify():

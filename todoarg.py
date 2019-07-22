@@ -72,12 +72,11 @@ with open('csv.csv', 'a+', newline='') as myfile:
             task = args.select      # taken as input with -l
 
             for line in lines:
-                if not task in line.split(',')[0]:      # checks and prints all the records which aren't selected
-                    f.write(line)
-            for line in lines:
                 if task in line.split(',')[0]:          # changing status to complete for the selected entry
                     f.write('\n' + line.split(',')[0] + ',' + line.split(',')[1] + ',' + line.split(',')[2] + ','
                             + line.split(',')[3] + ',' + line.split(',')[4] + ',' + 'Complete')
+                else:
+                    f.write('\n' + line)
 
             f.truncate()
             with open('csv.csv') as f2, open('demo005.csv', 'w') as f3:     # removal

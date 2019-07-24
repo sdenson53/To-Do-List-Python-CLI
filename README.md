@@ -17,7 +17,14 @@ python todoarg.py -o <option><br>
   To sort list accroding to due date:<br>
   python todoarg.py -o sort -l due<br>
   To view Completed tasks:<br>
-  python todoarg.py -o sort -l status0<br>
+  python todoarg.py -o sort -l complete<br>
   To view Incomplete tasks:<br>
-  python todoarg.py -o sort -l status1<br>
+  python todoarg.py -o sort -l incomplete<br>
+  To sort by project:<br>
+  python todoarg.py -o sort -l project<br>
+  To sort by context:<br>
+  python todoarg.py -o sort -l context<br>
+  To show overdue tasks(due today or before today):<br>
+  python todoarg.py -o sort -l overdue<br>
+  
     
